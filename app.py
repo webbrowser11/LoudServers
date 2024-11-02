@@ -28,6 +28,3 @@ def stop_ping():
     global pinging 
     pinging = False
     return jsonify({"status": "Pinging stopped"}),200
-
-if __name__ == '__main__':
-    app.run(debug=True)
