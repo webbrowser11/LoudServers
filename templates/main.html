@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>LoudServers Control panel</title>
+    </head>
+    <body>
+        <h1>LoudServers control panel</h1>
+        <button id="startBtn">start Ping</button>
+        <button id="stopBtn">stop Ping</button>
+        <div id=""status></div>
+
+        <script>
+            document.getElementById('startBtn').onclick = function() {
+                fetch('/start_ping', { method: 'POST'})
+                    .then(response => response.json())
+                    .then(data => document.getElementById('status').innerText = data.status);
+                
+            };
+
+            document.getElementById('stopBtn').onclick = function() {
+                fetch('/stop_ping', { method: 'POST'})
+                    .then(response => response.json())
+                    .then(data => document.getElementById('status').innerText = data.status);
+            };
+        </script>
+    </body>
+</html>
