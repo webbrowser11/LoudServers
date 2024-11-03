@@ -113,7 +113,7 @@ def index():
             });
         </script>
         <center>copyright © 2024 LoudServers Team</center>
-        <p>more: <a href="https://github.com/webbrowser11/LoudServers/edit/main/app.py" style="font-size: 0.8em;">Github</a></p>
+        <center><a href="https://github.com/webbrowser11/LoudServers/edit/main/app.py" style="font-size: 0.8em;">Github</a></center>
     </body>
     </html>
     '''
