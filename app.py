@@ -70,7 +70,7 @@ def index():
         </style>
     </head>
     <body>
-        <h1>Ping Service</h1>
+        <h1>LoudServers</h1>
         <form id="startPingForm">
             <input type="text" id="website" placeholder="Enter website URL" required>
             <button type="submit">Start Ping</button>
@@ -112,6 +112,7 @@ def index():
                 });
             });
         </script>
+        <center>copyright © 2024 LoudServers Team</center>
     </body>
     </html>
     '''
