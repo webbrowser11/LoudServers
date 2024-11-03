@@ -6,15 +6,15 @@ import time
 app = Flask(__name__)
 pinging = False
 website = None
-ping_results = []  # List to hold the ping results
+ping_results = []
 
 def ping_server():
     global pinging, ping_results
     while pinging:
         response = ping(website, count=1)
-        ping_results.append(str(response))  # Store response as a string
+        ping_results.append(str(response))
         print(response)
-        time.sleep(1)  # Optional: Delay between pings
+        time.sleep(1)
 
 @app.route('/')
 def index():
@@ -137,7 +137,7 @@ def stop_ping():
 
 @app.route('/ping_results', methods=['GET'])
 def get_ping_results():
-    return jsonify({"results": ping_results})  # Return the list of ping results
+    return jsonify({"results": ping_results})
 
 if __name__ == '__main__':
     app.run(debug=True)
