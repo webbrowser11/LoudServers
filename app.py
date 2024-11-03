@@ -25,6 +25,49 @@ def index():
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Ping Service</title>
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 20px;
+            }
+            h1 {
+                color: #333;
+            }
+            form {
+                margin: 10px 0;
+                padding: 10px;
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+            input[type="text"] {
+                padding: 10px;
+                width: calc(100% - 22px);
+                margin-bottom: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 16px;
+            }
+            button {
+                padding: 10px 15px;
+                background-color: #007BFF;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+            button:hover {
+                background-color: #0056b3;
+            }
+            #response {
+                margin-top: 20px;
+                font-size: 18px;
+                color: #333;
+            }
+        </style>
     </head>
     <body>
         <h1>Ping Service</h1>
@@ -38,8 +81,6 @@ def index():
         </form>
 
         <div id="response"></div>
-        <h2>Ping Results:</h2>
-        <div id="pingResults"></div>  <!-- Area to display ping results -->
 
         <script>
             document.getElementById('startPingForm').addEventListener('submit', function(event) {
@@ -56,7 +97,6 @@ def index():
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('response').innerText = data.status;
-                    fetchPingResults();  // Start fetching ping results
                 });
             });
 
@@ -71,16 +111,6 @@ def index():
                     document.getElementById('response').innerText = data.status;
                 });
             });
-
-            function fetchPingResults() {
-                setInterval(function() {
-                    fetch('/ping_results')
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('pingResults').innerText = data.results.join('\\n');  // Display results
-                    });
-                }, 1000); // Fetch results every second
-            }
         </script>
     </body>
     </html>
