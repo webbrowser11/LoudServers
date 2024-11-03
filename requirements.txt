@@ -1,4 +1,4 @@
 Flask==2.2.3
 pythonping==1.1.4
 requests==2.32.3
-Werkzeug==2.2.2  # Upgrade to a version compatible with Flask 2.2.3
+Werkzeug==2.2.2
