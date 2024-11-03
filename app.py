@@ -12,6 +12,63 @@ def ping_server():
         response = ping(website, count=1)
         print(response)
 
+@app.route('/')
+def index():
+    return '''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ping Service</title>
+    </head>
+    <body>
+        <h1>Ping Service</h1>
+        <form id="startPingForm">
+            <input type="text" id="website" placeholder="Enter website URL" required>
+            <button type="submit">Start Ping</button>
+        </form>
+        
+        <form id="stopPingForm">
+            <button type="submit">Stop Ping</button>
+        </form>
+
+        <div id="response"></div>
+
+        <script>
+            document.getElementById('startPingForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const website = document.getElementById('website').value;
+
+                fetch('/start_ping', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ website: website }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('response').innerText = data.status;
+                });
+            });
+
+            document.getElementById('stopPingForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                fetch('/stop_ping', {
+                    method: 'POST',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('response').innerText = data.status;
+                });
+            });
+        </script>
+    </body>
+    </html>
+    '''
+
 @app.route('/start_ping', methods=['POST'])
 def start_ping():
     global pinging, website
