@@ -1,16 +1,20 @@
 from flask import Flask, jsonify, request
 from pythonping import ping
 import threading
+import time
 
 app = Flask(__name__)
 pinging = False
 website = None
+ping_results = []  # List to hold the ping results
 
 def ping_server():
-    global pinging
+    global pinging, ping_results
     while pinging:
         response = ping(website, count=1)
+        ping_results.append(str(response))  # Store response as a string
         print(response)
+        time.sleep(1)  # Optional: Delay between pings
 
 @app.route('/')
 def index():
@@ -34,6 +38,8 @@ def index():
         </form>
 
         <div id="response"></div>
+        <h2>Ping Results:</h2>
+        <div id="pingResults"></div>  <!-- Area to display ping results -->
 
         <script>
             document.getElementById('startPingForm').addEventListener('submit', function(event) {
@@ -50,6 +56,7 @@ def index():
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('response').innerText = data.status;
+                    fetchPingResults();  // Start fetching ping results
                 });
             });
 
@@ -64,6 +71,16 @@ def index():
                     document.getElementById('response').innerText = data.status;
                 });
             });
+
+            function fetchPingResults() {
+                setInterval(function() {
+                    fetch('/ping_results')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('pingResults').innerText = data.results.join('\\n');  // Display results
+                    });
+                }, 1000); // Fetch results every second
+            }
         </script>
     </body>
     </html>
@@ -87,6 +104,10 @@ def stop_ping():
     global pinging 
     pinging = False
     return jsonify({"status": "Pinging stopped"}), 200
+
+@app.route('/ping_results', methods=['GET'])
+def get_ping_results():
+    return jsonify({"results": ping_results})  # Return the list of ping results
 
 if __name__ == '__main__':
     app.run(debug=True)
