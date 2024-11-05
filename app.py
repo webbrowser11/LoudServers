@@ -2,24 +2,21 @@ from flask import Flask, jsonify, request
 from pythonping import ping
 import threading
 import time
-import re
 
 app = Flask(__name__)
 pinging = False
 website = None
 ping_results = []
+ping_ip = None  # To store the IP address of the pinged website
 
 def ping_server():
-    global pinging, ping_results
+    global pinging, ping_results, ping_ip
     while pinging:
         response = ping(website, count=1)
-        ip_address = response._responses[0].address  # Extract the IP address
-        result = {
-            "ip_address": ip_address,
-            "ping_response": str(response)
-        }
-        ping_results.append(result)
-        print(result)
+        if response:
+            ping_ip = response._responses[0].address  # Capture the IP address
+            ping_results.append(str(response))
+            print(response)
         time.sleep(1)
 
 @app.route('/')
@@ -87,6 +84,7 @@ def index():
         </form>
 
         <div id="response"></div>
+        <div id="ip"></div>
 
         <script>
             document.getElementById('startPingForm').addEventListener('submit', function(event) {
@@ -103,6 +101,7 @@ def index():
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('response').innerText = data.status;
+                    updatePingResults();
                 });
             });
 
@@ -117,6 +116,16 @@ def index():
                     document.getElementById('response').innerText = data.status;
                 });
             });
+
+            function updatePingResults() {
+                fetch('/ping_results')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ip) {
+                        document.getElementById('ip').innerText = "IP Address: " + data.ip;
+                    }
+                });
+            }
         </script>
         <center>copyright © 2024 LoudServers Team</center>
         <center><a href="https://github.com/webbrowser11/LoudServers/edit/main/app.py" style="font-size: 0.8em;">Github</a></center>
@@ -126,14 +135,16 @@ def index():
 
 @app.route('/start_ping', methods=['POST'])
 def start_ping():
-    global pinging, website
+    global pinging, website, ping_results
     data = request.json
     website = data.get('website', '').lower()
     
+    ping_results = []  # Clear previous ping results on new request
+
     if not pinging and website:
         pinging = True
         threading.Thread(target=ping_server).start()
-        return jsonify({"status": "Pinging started for " + website}), 200
+        return jsonify({"status": f"Pinging started for {website}"}), 200
     else:
         return jsonify({"status": "Pinging already started or no website provided"}), 400
 
@@ -145,7 +156,7 @@ def stop_ping():
 
 @app.route('/ping_results', methods=['GET'])
 def get_ping_results():
-    return jsonify({"results": ping_results})
+    return jsonify({"results": ping_results, "ip": ping_ip})  # Include IP address in response
 
 if __name__ == '__main__':
     app.run(debug=True)
