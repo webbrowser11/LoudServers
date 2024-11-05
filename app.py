@@ -82,6 +82,7 @@ def index():
     </head>
     <body>
         <h1>LoudServers</h1>
+        <p>if the websites ip adress not resolved after first hit this means it may not have started the ping hit ping again to verify start if so.</p>
         <form id="startPingForm">
             <input type="text" id="website" placeholder="Enter website URL" required>
             <button type="submit">Start Ping</button>
