@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from pythonping import ping
 import threading
 import time
+import socket
 
 app = Flask(__name__)
 pinging = False
@@ -9,12 +10,19 @@ website = None
 ping_results = []
 ping_ip = None  # To store the IP address of the pinged website
 
+def resolve_ip(hostname):
+    try:
+        return socket.gethostbyname(hostname)
+    except socket.gaierror:
+        return None
+
 def ping_server():
     global pinging, ping_results, ping_ip
-    while pinging:
-        response = ping(website, count=1)
+    ping_ip = resolve_ip(website)  # Resolve the IP address at the start
+    
+    while pinging and ping_ip:
+        response = ping(ping_ip, count=1)
         if response:
-            ping_ip = response._responses[0].address  # Capture the IP address
             ping_results.append(str(response))
             print(response)
         time.sleep(1)
@@ -27,7 +35,7 @@ def index():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Loud Servers</title>
+        <title>LoudServers</title>
         <style>
             body {
                 font-family: 'Arial', sans-serif;
